@@ -1,0 +1,6 @@
+{
+  "package_name": "Newtonsoft.Json",
+  "repo_url_or_path": "https://api.nuget.org/v3-flatcontainer",
+  "test_mode": false,
+  "ascii_tree": true
+}
