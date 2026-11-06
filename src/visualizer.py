@@ -1,6 +1,8 @@
 """Модуль визуализации графа зависимостей (Graphviz и ASCII tree)."""
 
+import os
 import subprocess
+import sys
 from typing import Dict, List, Set, Tuple
 
 
@@ -23,7 +25,7 @@ def generate_graphviz_dot(graph: Dict[str, List[str]]) -> str:
 
 
 def render_graph_image(dot_content: str, out_file: str = "graph.png") -> None:
-    """Компилирует DOT в графический файл и выводит его на экран."""
+    """Компилирует DOT в графический файл и открывает его на экране."""
     try:
         proc = subprocess.Popen(
             ["dot", "-Tpng", "-o", out_file],
@@ -35,10 +37,15 @@ def render_graph_image(dot_content: str, out_file: str = "graph.png") -> None:
         if proc.returncode != 0:
             print(f"[Graphviz warning] Сбой рендера: {err.decode()}")
             return
-        # Открытие системным просмотрщиком
-        subprocess.run(["xdg-open", out_file], check=False)
+
+        if sys.platform.startswith("win"):
+            os.startfile(out_file)
+        elif sys.platform.startswith("darwin"):
+            subprocess.run(["open", out_file], check=False)
+        else:
+            subprocess.run(["xdg-open", out_file], check=False)
     except FileNotFoundError:
-        print("[Visualizer] Утилита 'dot' не найдена в PATH.")
+        print("[Visualizer] Утилита 'dot' не найдена в системном PATH.")
 
 
 def build_ascii_tree(root: str, graph: Dict[str, List[str]]) -> str:
