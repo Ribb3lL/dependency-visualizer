@@ -13,10 +13,10 @@
 ## 3. Команды для сборки проекта и запуска тестов
 ```bash
 # Запуск автоматических тестов
-make test
+python3 -m unittest discover -s tests
 
 # Запуск основного пайплайна
-make run
+python3 src/main.py --config config.json
 
 # Запуск с демонстрацией конкретного этапа (1-5)
 python3 src/main.py --config config.json --stage 1
