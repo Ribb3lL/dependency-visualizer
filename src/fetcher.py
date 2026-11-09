@@ -4,8 +4,10 @@ import json
 import os
 import urllib.error
 import urllib.request
-import xml.etree.ElementTree as ET
+from xml.etree import ElementTree as element_tree
 from typing import Dict, List, Set
+
+HTTP_TIMEOUT_SECONDS = 10
 
 
 def parse_test_file(filepath: str) -> Dict[str, List[str]]:
@@ -28,7 +30,7 @@ def parse_test_file(filepath: str) -> Dict[str, List[str]]:
 
 def _extract_nuspec_dependencies(xml_text: str) -> List[str]:
     """Извлекает ID прямых зависимостей из XML документа спецификации."""
-    root = ET.fromstring(xml_text)
+    root = element_tree.fromstring(xml_text)
     dependencies: Set[str] = set()
     for elem in root.iter():
         if elem.tag.split("}")[-1] == "dependency":
@@ -48,7 +50,9 @@ def get_nuget_dependencies(base_url: str, package: str) -> List[str]:
         index_url, headers={"User-Agent": "DepVisualizer/1.0"}
     )
     try:
-        with urllib.request.urlopen(req_index, timeout=10) as resp:
+        with urllib.request.urlopen(
+            req_index, timeout=HTTP_TIMEOUT_SECONDS
+        ) as resp:
             raw_meta = resp.read().decode("utf-8")
     except (urllib.error.URLError, TimeoutError) as exc:
         raise ConnectionError(f"Ошибка запроса к NuGet: {exc}")
@@ -65,7 +69,9 @@ def get_nuget_dependencies(base_url: str, package: str) -> List[str]:
     req_nuspec = urllib.request.Request(
         nuspec_url, headers={"User-Agent": "DepVisualizer/1.0"}
     )
-    with urllib.request.urlopen(req_nuspec, timeout=10) as resp:
+    with urllib.request.urlopen(
+        req_nuspec, timeout=HTTP_TIMEOUT_SECONDS
+    ) as resp:
         nuspec_xml = resp.read().decode("utf-8")
 
     return _extract_nuspec_dependencies(nuspec_xml)

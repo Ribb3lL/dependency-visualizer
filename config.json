@@ -1,6 +1,6 @@
 {
-  "package_name": "Newtonsoft.Json",
-  "repo_url_or_path": "https://api.nuget.org/v3-flatcontainer",
-  "test_mode": false,
+  "package_name": "A",
+  "repo_url_or_path": "test_graph.txt",
+  "test_mode": true,
   "ascii_tree": true
 }
